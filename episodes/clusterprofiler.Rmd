@@ -6,16 +6,31 @@ exercises: 2
 
 :::::::::::::::::::::::::::::::::::::: questions 
 
-- What is clusterProfiler?
+- What are the different types of GO terms (BP, MF, CC)?
+- How do we perform ORA using `enrichGO()` function?
+-	How can we run GSEA-style functional class scoring with `gseGO()` function?
+
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: objectives
 
-- Explain how to use markdown with the new lesson template
-- Demonstrate how to include pieces of code, figures, and nested challenge blocks
+- Apply GO-based enrichment methods using `clusterProfiler`
+- Perform both ORA and GSEA using the GO terms database
+- Build confidence in navigating GO resources and interpreting enriched terms 
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
+
+## Introduction
+
+The Gene Ontology (GO) project is a major bioinformatics initiative that standardises how we describe gene functions across species, organising them into three categories: Biological Process, Molecular Function and Cellular Component. `clusterProfiler` is an R package that allows us to test whether these GO terms are associated with our RNA-seq results and gain insight into the pathways or functions represented in our data. This section demonstrates how to perform both **over-representation analysis (ORA)** and **functional class scoring (FCS)** with GO database, depending on whether you are working with a list of significant genes or full ranked expression data. 
+
+## Over-Representation Analysis (ORA)
+
+**ORA** tests whether a list of significant genes are linked to specific GO terms. The input is a vector of gene IDs (or list of genes) that passes your differential expression cut-off. ORA can be run separately for downregulated and upregulated genes to reveal which GO terms are enriched in each direction.
+
+We first subset the `debasal` dataset to extract genes with adjusted p-value below 0.01 and store this set of significant genes in an object called `genes`. We then run enrichGO function using this gene list, specifying the organism database `org.Mm.eg.db`, the identifier type `ENTREZID` and the GO category of interest `CC` (for cellular component). The function is configured with standard p-value and q-value, using Benjamini-Hochberg correction. We use the function `head()` to check the first few lines of output. 
+
 
 ```{r, message=FALSE,warning=FALSE,echo=FALSE}
 
@@ -46,30 +61,24 @@ filteredcounts <- read.csv("data/limma-voom_filtered_counts", header = TRUE, sep
 ```
 
 
-## Gene Ontology testing with `clusterProfiler`
-
-
 ```{r}
 
 debasal$Status <- debasal$adj.P.Val < 0.01
 gene <- debasal$ENTREZID[debasal$Status]
 
-
-ego <- enrichGO(gene          = gene,
-                OrgDb         = org.Mm.eg.db,
-                keyType       = 'ENTREZID',
-                ont           = "CC",
+ego <- enrichGO(gene = gene,
+                OrgDb = org.Mm.eg.db,
+                keyType = 'ENTREZID',
+                ont = "CC",
                 pAdjustMethod = "BH",
-                pvalueCutoff  = 0.01,
-                qvalueCutoff  = 0.05,
+                pvalueCutoff = 0.01,
+                qvalueCutoff = 0.05,
                 readable = TRUE)
 head(ego)
 
-
-
 ```
 
-
+We can then use `dotplot()` function to visualise the results in the form of a dot plot. From the plot below, we can see that GO term cellular component spindle, membrane microdomain and ribosome are top enriched terms.
 
 ```{r}
 
@@ -77,23 +86,22 @@ dotplot(ego)
 
 ```
 
-
-
 ::::: challenge
 
-Repeat this analysis using `deluminal` data. Are the enriched pathways similar?
-
+Challenge! Can you identify enriched GO term biological process in `deluminal` dataset? Are the enriched pathways similar?
 
 :::::
+## Gene Set Enrichment Analysis (GSEA)
 
+We can also perform **GSEA** using GO database. GSEA is a type of functional class scoring method that evaluates whether genes belonging to a GO term tend to appear at the top or bottom of a ranked gene list, rather than relying on a cut-off (i.e. adj.P.Val < 0.01). The input is a continuous ranking metric (e.g. log2FC) for all genes. This allows the detection of subtle but coordinated shifts in GO terms for both downregulated and upregulated pathways. 
 
-```{r}
+We begin by creating a ranked gene list for GSEA by extracting the logFC values from `debasal` dataset and its corresponding `ENTREZID`. We then sort this vector in a decreasing order so that the upregulated genes appear at the top of the list and the downregulated genes at the bottom. Using this ranked gene list, we run `gseGO()` to perform GSEA on GO terms `CC`, by specifying the organism database, gene ID type, gene set limits and p-value cut-off for enrichment. 
 
+```{r, warning=FALSE}
 
 debasal_genelist <- debasal$logFC
 names(debasal_genelist) <- debasal$ENTREZID
 debasal_genelist <- sort(debasal_genelist, decreasing = TRUE)
-
 
 ego3 <- gseGO(gene          = debasal_genelist,
                 OrgDb         = org.Mm.eg.db,
@@ -104,48 +112,24 @@ ego3 <- gseGO(gene          = debasal_genelist,
               pvalueCutoff = 0.05,
               verbose      = FALSE)
 head(ego3)
-
-
-```
-
-```{r}
-
 dotplot(ego3)
 
 ```
 
+We can also use the `gseaplot()` function to visualise GSEA result for a specific gene set. In this example, we select the top-ranked enriched GO term (geneSetID = 1). The result-ing plot displays how genes contributing to the enrichment of this GO term are distributed in the ranked gene list. 
 
-## What is GSEA?
+```{r, warning=FALSE}
 
-*Brief explanation/refresh here if not explained in intro*
-
-## Gene Set Enrichment Analysis (GSEA)
-
-```{r}
-gseaplot(ego3, by = "all",title = ego3$Description[1],geneSetID = 1)
-#title = gse$Description[1], geneSetID = 1)
+gseaplot(ego3, by = "all", title = ego3$Description[1], geneSetID = 1)
 
 ```
-
-Plot of number of articles using the term:
-
-```{r}
-
-# From https://learn.gencore.bio.nyu.edu/rna-seq-analysis/gene-set-enrichment-analysis/
-
-terms <- ego3$Description[1:3]
-pmcplot(terms, 2020:2025, proportion=FALSE)
-
-
-```
-
-
-
 
 
 ::::::::::::::::::::::::::::::::::::: keypoints 
 
-- clusterProfiler makes cool plots!
+- GO terms are divided into Biological Process (BP), Molecular Function (MF) and Cellular Component (CC), which can be analysed separately or together depending on the biological question.
+- The `enrichGO()` and `gseGO()` functions in `clusterProfiler` allow users to perform **ORA** and **GSEA** using the GO database directly.
+- GO testing results highlight gene sets or pathways that are overrepresented in your dataset, allowing interpretation of downregulated or upregulated genes.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
