@@ -10,20 +10,20 @@
 # incubator: The Carpentries Incubator
 # Note that you can also use a custom carpentry type. For more info,
 # see the documentation: https://carpentries.github.io/sandpaper-docs/editing.html
-carpentry: 'incubator'
+carpentry: 'uom'
 
 # Custom carpentry description
 # This will be used as the alt text for the logo
 # carpentry_description: "Custom Carpentry"
 
 # Overall title for pages.
-title: 'Lesson Title'
+title: 'RNA-seq pathway analysis'
 
 # Date the lesson was created (YYYY-MM-DD, this is empty by default)
 created: '2025-10-09'
 
 # Comma-separated list of keywords for the lesson
-keywords: 'software, data, lesson, The Carpentries'
+keywords: 'rna-seq, bioinformatics'
 
 # Life cycle stage of the lesson
 # possible values: pre-alpha, alpha, beta, stable
@@ -33,13 +33,13 @@ life_cycle: 'pre-alpha'
 license: 'CC-BY 4.0'
 
 # Link to the source repository for this lesson
-source: 'https://example.com/template-source/lesson-example'
+source: 'https://melbournebioinformatics.github.io/rna-pathways/'
 
 # Default branch of your lesson
 branch: 'main'
 
 # Who to contact if there are any issues
-contact: 'team@carpentries.org'
+contact: 'bioinformatics-training@unimelb.edu.au'
 
 # Navigation ------------------------------------------------
 #
@@ -84,7 +84,10 @@ instructors:
 profiles:
 
 # Customisation ---------------------------------------------
-#
+
+# This is the UoM varnish, which is a custom version of the Carpentries varnish
+varnish: 'melbournebioinformatics/uom-varnish@main'
+url: 'melbournebioinformatics.github.io/uom-varnish'
 # This space below is where custom yaml items (e.g. pinning
 # sandpaper and varnish versions) should live
 
