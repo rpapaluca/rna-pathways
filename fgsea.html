@@ -244,7 +244,9 @@
 
     <div id="flush-collapsecurrent" class="accordion-collapse collapse show" aria-labelledby="flush-headingcurrent" data-bs-parent="#accordionFlushcurrent">
       <div class="accordion-body">
-        <ul><li><a href="#gene-set-enrichment-analysis-with-fgsea">Gene Set Enrichment Analysis with <code>fgsea</code></a></li>
+        <ul><li><a href="#what-is-gsea-in-practice">What is GSEA (in practice)?</a></li>
+<li><a href="#fgsea-setup"><code>fgsea</code> Setup</a></li>
+<li><a href="#gene-set-enrichment-analysis-with-fgsea">Gene Set Enrichment Analysis with <code>fgsea</code></a></li>
         </ul></div><!--/div.accordion-body-->
     </div><!--/div.accordion-collapse-->
 
@@ -336,7 +338,7 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Gene set enrichment analysis with <code>fgsea</code></h1>
-        <p>Last updated on 2025-11-19 |
+        <p>Last updated on 2025-11-23 |
 
         <a href="https://melbournebioinformatics.github.io/rna-pathways/edit/main/episodes/fgsea.Rmd" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -355,7 +357,13 @@
 <div class="card-body">
 <div class="inner">
 <h3 class="card-title">Questions</h3>
-<ul><li>hello!</li>
+<ul><li>What is Gene Set Enrichment Analysis (GSEA) and when should I use
+it?</li>
+<li>How does fgsea perform fast, ranked-list GSEA?</li>
+<li>How do I interpret enrichment scores, p-values, and leading-edge
+genes?</li>
+<li>How does fgsea differ from the GSEA functions in
+clusterProfiler?</li>
 </ul></div>
 </div>
 </div>
@@ -363,13 +371,40 @@
 <div class="card-body">
 <div class="inner bordered">
 <h3 class="card-title">Objectives</h3>
-<ul><li>To learn</li>
+<ul><li>Prepare a ranked gene list suitable for GSEA.</li>
+<li>Run the ‘fgsea’ algorithm on Hallmark or other gene sets.</li>
+<li>Identify enriched pathways and distinguish between up- and
+down-regulated sets.</li>
+<li>Use ‘plotEnrichment()’ and ‘plotGseaTable()’ to visualise and
+interpret results.</li>
+<li>Understand the conceptual differences between ‘fgsea’ and
+‘clusterProfiler::gseGO/gseKEGG’</li>
 </ul></div>
 </div>
 </div>
 </div>
 </div>
-<section><h2 class="section-heading" id="gene-set-enrichment-analysis-with-fgsea">Gene Set Enrichment Analysis with <code>fgsea</code>
+<section><h2 class="section-heading" id="what-is-gsea-in-practice">What is GSEA (in practice)?<a class="anchor" aria-label="anchor" href="#what-is-gsea-in-practice"></a></h2>
+<hr class="half-width"><p>Unlike over-representation analysis (ORA), which tests a
+<strong>subset</strong> of significant genes,<br>
+Gene Set Enrichment Analysis (GSEA) uses a <strong>ranked list of all
+genes</strong>, such as:</p>
+<ul><li>t-statistics<br></li>
+<li>log fold changes<br></li>
+<li>Wald statistics</li>
+</ul><p>This helps detect coordinated but subtle shifts across entire
+pathways that might be missed by threshold-based methods.</p>
+<p>The <code>fgsea</code> package implements a fast,
+permutation-efficient version of the original Broad Institute GSEA
+algorithm, allowing thousands of pathways to be tested quickly.</p>
+<p>In this part of the workshop, we will: - Create a ranked list of
+genes from the ‘debasal’ dataset - Run ‘fgsea()’ using the mouse
+Hallmark gene sets ‘(Mm.H)’. - Explore the top enriched pathways -
+Visualise both multiple pathways and a single pathway in detail</p>
+</section><section><h2 class="section-heading" id="fgsea-setup">
+<code>fgsea</code> Setup<a class="anchor" aria-label="anchor" href="#fgsea-setup"></a></h2>
+<hr class="half-width"><p>Before we begin, load the packages and data needed for GSEA:</p>
+</section><section><h2 class="section-heading" id="gene-set-enrichment-analysis-with-fgsea">Gene Set Enrichment Analysis with <code>fgsea</code>
 <a class="anchor" aria-label="anchor" href="#gene-set-enrichment-analysis-with-fgsea"></a></h2>
 <hr class="half-width"><p>Now, let’s perform Gene Set Enrichment Analysis using the
 <code>fgsea</code> package.</p>
@@ -377,22 +412,34 @@
 <h3 class="code-label">R<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="co">#Prepare ranked list of genes</span></span>
+<code class="sourceCode R"><span><span class="co"># Prepare ranked list of genes</span></span>
+<span><span class="co"># Subset the columns we need (ENTREZID + t-statistic)</span></span>
+<span><span class="co"># and sort genes by t-statistic (decreasing = FALSE → most negative → most positive)</span></span>
 <span><span class="va">rankedgenes_df</span> <span class="op">&lt;-</span> <span class="va">debasal</span><span class="op">[</span><span class="fu">order</span><span class="op">(</span><span class="va">debasal</span><span class="op">$</span><span class="va">t</span>, decreasing <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, <span class="fu">c</span><span class="op">(</span><span class="st">"ENTREZID"</span>, <span class="st">"t"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co"># Create the numeric vector of t-statistics</span></span>
 <span><span class="va">rankedgenes</span> <span class="op">&lt;-</span> <span class="va">rankedgenes_df</span><span class="op">$</span><span class="va">t</span></span>
+<span><span class="co"># Name each t-statistic value with the corresponding Entrez ID</span></span>
+<span><span class="co"># fgsea() requires a *named* numeric vector:</span></span>
+<span><span class="co">#   - values = ranking metric (t-statistics)</span></span>
+<span><span class="co">#   - names  = gene identifiers (Entrez IDs)</span></span>
 <span><span class="fu">names</span><span class="op">(</span><span class="va">rankedgenes</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">rankedgenes_df</span><span class="op">$</span><span class="va">ENTREZID</span></span>
 <span></span>
 <span><span class="co"># Perform fgsea</span></span>
+<span><span class="co"># pathways = Mm.H  (Hallmark gene sets loaded earlier)</span></span>
+<span><span class="co"># stats     = ranked gene list (t-statistics)</span></span>
+<span><span class="co"># minSize   = minimum number of genes required per pathway</span></span>
 <span><span class="va">fgseaRes</span> <span class="op">&lt;-</span> <span class="fu">fgsea</span><span class="op">(</span>pathways <span class="op">=</span> <span class="va">Mm.H</span>, stats <span class="op">=</span> <span class="va">rankedgenes</span>, minSize <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span></span>
-<span></span>
-<span></span>
-<span><span class="co"># Plot</span></span>
-<span><span class="co"># Code from vignette</span></span>
-<span></span>
+<span><span class="co"># Extract top enriched pathways</span></span>
+<span><span class="co"># Up-regulated pathways (ES &gt; 0), ordered by smallest p-value</span></span>
 <span><span class="va">topPathwaysUp</span> <span class="op">&lt;-</span> <span class="va">fgseaRes</span><span class="op">[</span><span class="va">ES</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">]</span><span class="op">[</span><span class="fu">head</span><span class="op">(</span><span class="fu">order</span><span class="op">(</span><span class="va">pval</span><span class="op">)</span>, n<span class="op">=</span><span class="fl">10</span><span class="op">)</span>, <span class="va">pathway</span><span class="op">]</span></span>
+<span><span class="co"># Down-regulated pathways (ES &lt; 0), ordered by smallest p-value</span></span>
 <span><span class="va">topPathwaysDown</span> <span class="op">&lt;-</span> <span class="va">fgseaRes</span><span class="op">[</span><span class="va">ES</span> <span class="op">&lt;</span> <span class="fl">0</span><span class="op">]</span><span class="op">[</span><span class="fu">head</span><span class="op">(</span><span class="fu">order</span><span class="op">(</span><span class="va">pval</span><span class="op">)</span>, n<span class="op">=</span><span class="fl">10</span><span class="op">)</span>, <span class="va">pathway</span><span class="op">]</span></span>
+<span><span class="co"># Combine: first up-regulated, then reversed down-regulated</span></span>
 <span><span class="va">topPathways</span> <span class="op">&lt;-</span> <span class="fu">c</span><span class="op">(</span><span class="va">topPathwaysUp</span>, <span class="fu">rev</span><span class="op">(</span><span class="va">topPathwaysDown</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot a table of enrichment results</span></span>
 <span><span class="fu">plotGseaTable</span><span class="op">(</span><span class="va">Mm.H</span><span class="op">[</span><span class="va">topPathways</span><span class="op">]</span>, <span class="va">rankedgenes</span>, <span class="va">fgseaRes</span>, </span>
 <span>              gseaParam<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span></span></code></pre>
 </div>
@@ -400,25 +447,69 @@
 <h3 class="code-label">R<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Plot the top pathway</span></span>
-<span></span>
+<code class="sourceCode R"><span><span class="co"># Plot the enrichment curve for the top pathway</span></span>
+<span><span class="co"># Visualise a single pathway: running enrichment score vs. ranked genes.</span></span>
 <span><span class="fu">plotEnrichment</span><span class="op">(</span><span class="va">Mm.H</span><span class="op">[[</span><span class="va">topPathwaysUp</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">]</span>, <span class="va">rankedgenes</span><span class="op">)</span> <span class="op">+</span> <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="va">topPathwaysUp</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></code></pre>
 </div>
-<figure><img src="fig/fgsea-rendered-fgsea-analysis-2.png" style="display: block; margin: auto;" class="figure mx-auto d-block"></figure><div id="keypoints1" class="callout keypoints">
+<figure><img src="fig/fgsea-rendered-fgsea-analysis-2.png" style="display: block; margin: auto;" class="figure mx-auto d-block"></figure><div id="apply-fgsea-to-the-deluminal-contrast" class="callout discussion">
+<div class="callout-square">
+<i class="callout-icon" data-feather="message-circle"></i>
+</div>
+<span class="callout-header">Discussion</span>
+<div id="apply-fgsea-to-the-deluminal-contrast" class="callout-inner">
+<h3 class="callout-title">Apply fgsea to the <em>deluminal</em>
+contrast</h3>
+<div class="callout-content">
+<p>Q: Repeat the GSEA analysis using the <code>deluminal</code> dataset
+instead of <code>debasal</code>.</p>
+<ol style="list-style-type: decimal"><li>Create a ranked gene list using the <code>t</code> statistic from
+<code>deluminal</code>.<br></li>
+<li>Run <code>fgsea()</code> with the same Hallmark gene sets
+(<code>Mm.H</code>).<br></li>
+<li>Identify the top 5 enriched pathways.<br></li>
+<li>Are they different from the <code>debasal</code> results? What
+biological differences might explain this? ### Solution</li>
+</ol><div class="codewrapper sourceCode" id="cb3">
+<h3 class="code-label">R<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode r" tabindex="0"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Create a ranked gene list for the deluminal contrast</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>rankedgenes_df_del <span class="ot">&lt;-</span> deluminal[<span class="fu">order</span>(deluminal<span class="sc">$</span>t, <span class="at">decreasing =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>                                <span class="fu">c</span>(<span class="st">"ENTREZID"</span>, <span class="st">"t"</span>)]</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>rankedgenes_del <span class="ot">&lt;-</span> rankedgenes_df_del<span class="sc">$</span>t</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="fu">names</span>(rankedgenes_del) <span class="ot">&lt;-</span> rankedgenes_df_del<span class="sc">$</span>ENTREZID</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co"># Run fgsea</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>fgseaRes_del <span class="ot">&lt;-</span> <span class="fu">fgsea</span>(<span class="at">pathways =</span> Mm.H,</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>                      <span class="at">stats    =</span> rankedgenes_del,</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>                      <span class="at">minSize  =</span> <span class="dv">15</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co"># View the top 5 pathways</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>fgseaRes_del[<span class="fu">order</span>(pval)][<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, ]</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>Differences between <span class="fu">fgseaRes</span> (from debasal) and fgseaRes_del are expected and likely reflect biological differences between the two <span class="fu">contrasts</span> (e.g., different cell types or experimental conditions).</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="keypoints1" class="callout keypoints">
 <div class="callout-square">
 <i class="callout-icon" data-feather="key"></i>
 </div>
 <span class="callout-header">Key Points</span>
 <div class="callout-inner">
 <div class="callout-content">
-<ul><li>Use <code>.md</code> files for episodes when you want static
-content</li>
-<li>Use <code>.Rmd</code> files for episodes when you need to generate
-output</li>
-<li>Run <code>sandpaper::check_lesson()</code> to identify any issues
-with your lesson</li>
-<li>Run <code>sandpaper::build_lesson()</code> to preview your lesson
-locally</li>
+<ul><li>GSEA evaluates enrichment across a ranked list of all genes, not
+just a subset of significant ones.</li>
+<li>The <code>fgsea</code> package provides a fast implementation of
+GSEA suitable for large RNA-seq datasets.</li>
+<li>A positive NES indicates enrichment among up-regulated genes, while
+a negative NES indicates enrichment among down-regulated genes.</li>
+<li>
+<code>plotGseaTable()</code> and <code>plotEnrichment()</code> help
+visualise how pathways behave across the ranked gene list.</li>
+<li>Compared with <code>clusterProfiler</code>s GSEA functions,
+<code>fgsea</code> focuses on speed and flexibility, while
+<code>clusterProfiler</code> provides tighter integration with specific
+databases (e.g., GO, KEGG) and additional plotting helpers.</li>
 </ul></div>
 </div>
 </div>
@@ -486,8 +577,8 @@ any links that you are not going to use.
   "url": "melbournebioinformatics.github.io/uom-varnish/fgsea.html",
   "identifier": "melbournebioinformatics.github.io/uom-varnish/fgsea.html",
   "dateCreated": "2025-10-09",
-  "dateModified": "2025-11-19",
-  "datePublished": "2025-11-19"
+  "dateModified": "2025-11-23",
+  "datePublished": "2025-11-23"
 }
 
   </script><script>
