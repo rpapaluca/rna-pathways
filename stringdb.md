@@ -6,13 +6,18 @@ exercises: 2
 
 :::::::::::::::::::::::::::::::::::::: questions 
 
-- 
+- How can we use `STRINGdb` to visualise protein–protein interaction networks for our DE genes?  
+- How do we map our gene identifiers to the IDs used by STRING?  
+- What information does STRING functional enrichment add beyond standard GO/KEGG analysis?  
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: objectives
 
-- 
+- Load and initialise the `STRINGdb` object for mouse.  
+- Map a set of differentially expressed genes to STRING identifiers.  
+- Visualise a protein–protein interaction network for top DE genes.  
+- Retrieve and inspect STRING functional enrichment results.  
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -20,6 +25,17 @@ exercises: 2
 
 
 ## Interaction networks with `StringDB`
+So far, we have focused on pathway-level enrichment. Another useful way to interpret RNA-seq results is to look at ***protein–protein interaction (PPI) networks***:
+Are our differentially expressed genes part of the same complexes or signalling modules?
+
+The STRINGdb package provides an interface to the STRING database, which aggregates known and predicted PPIs from multiple sources (experiments, databases, text-mining, etc.).
+
+In this lesson we will:
+
+- Initialise a STRINGdb object for mouse.
+- Map our top differentially expressed genes to STRING IDs.
+- Plot an interaction network.
+- Retrieve functional enrichment results from STRING.
 
 
 ``` r
@@ -134,7 +150,13 @@ Read more about STRING:
 
 ::::::::::::::::::::::::::::::::::::: keypoints 
 
-- 
+- `STRINGdb` links your genes to protein–protein interaction networks from the STRING database.
+
+- Mapping from gene IDs (e.g. ENTREZ) to STRING IDs is a crucial first step.
+
+- Network visualisation can reveal modules of interconnected DE genes that may not be obvious from lists or tables.
+
+- STRING provides its own functional enrichment, which can complement results from `clusterProfiler` and `fgsea`.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
