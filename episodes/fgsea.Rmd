@@ -41,7 +41,7 @@ In this part of the workshop, we will:
 - Explore the top enriched pathways
 - Visualise both multiple pathways and a single pathway in detail 
 
-## 'fgsea' Setup
+## `fgsea` Setup
 Before we begin, load the packages and data needed for GSEA:
 
 ```{r, message=FALSE,warning=FALSE,echo=FALSE}
@@ -125,7 +125,7 @@ plotEnrichment(Mm.H[[topPathwaysUp[1]]], rankedgenes) + labs(title = topPathways
 
 ```
 
-::::::::::::::::::::::::::::::::::::: challenge
+:::::::::::::::::::::::::::::::::::: challenge
 ## Apply fgsea to the *deluminal* contrast 
 Q:  Repeat the GSEA analysis using the `deluminal` dataset instead of `debasal`.
 
@@ -133,7 +133,7 @@ Q:  Repeat the GSEA analysis using the `deluminal` dataset instead of `debasal`.
 2. Run `fgsea()` with the same Hallmark gene sets (`Mm.H`).  
 3. Identify the top 5 enriched pathways.  
 4. Are they different from the `debasal` results? What biological differences might explain this?
-:::::::::::::::: solution
+### Solution
 ```r
 # Create a ranked gene list for the deluminal contrast
 rankedgenes_df_del <- deluminal[order(deluminal$t, decreasing = FALSE),
@@ -149,14 +149,15 @@ fgseaRes_del <- fgsea(pathways = Mm.H,
 # View the top 5 pathways
 fgseaRes_del[order(pval)][1:5, ]
 Differences between fgseaRes (from debasal) and fgseaRes_del are expected and likely reflect biological differences between the two contrasts (e.g., different cell types or experimental conditions).
+```
 :::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: keypoints 
 
 - GSEA evaluates enrichment across a ranked list of all genes, not just a subset of significant ones.
-- The 'fgsea' package provides a fast implementation of GSEA suitable for large RNA-seq datasets.
+- The `fgsea` package provides a fast implementation of GSEA suitable for large RNA-seq datasets.
 - A positive NES indicates enrichment among up-regulated genes, while a negative NES indicates enrichment among down-regulated genes.
-- 'plotGseaTable()' and 'plotEnrichment()' help visualise how pathways behave across the ranked gene list.
-- Compared with 'clusterProfiler'’s GSEA functions, 'fgsea' focuses on speed and flexibility, while 'clusterProfiler' provides tighter integration with specific databases (e.g., GO, KEGG) and additional plotting helpers.
+- `plotGseaTable()` and `plotEnrichment()` help visualise how pathways behave across the ranked gene list.
+- Compared with `clusterProfiler`s GSEA functions, `fgsea` focuses on speed and flexibility, while `clusterProfiler` provides tighter integration with specific databases (e.g., GO, KEGG) and additional plotting helpers.
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
