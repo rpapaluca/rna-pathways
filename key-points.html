@@ -414,8 +414,17 @@ visualise how pathways behave across the ranked gene list.</li>
 databases (e.g., GO, KEGG) and additional plotting helpers.</li>
 </ul></section><section id="regenrich"><h2 class="section-heading"><a href="regenrich.html">Analysis with <code>RegEnrich</code></a></h2>
 <hr class="half-width">
-<ul><li>
-</li></ul></section><section id="stringdb"><h2 class="section-heading"><a href="stringdb.html">Interaction networks with <code>StringDB</code></a></h2>
+<ul>
+<li>
+<code>RegEnrich</code> helps identify potential regulatory drivers
+(e.g. TFs) behind observed gene expression changes.</li>
+<li>The package’s built-in TF dataset <code>(data(TFs))</code> is
+human-specific and not suitable for mouse RNA-seq analysis.</li>
+<li>For mouse data, a mouse-specific TF list (e.g. from TcoF-DB) must be
+supplied via the reg argument.</li>
+<li>A RegenrichSet object requires: an expression matrix, sample
+metadata, a regulator list, and a design/contrast specification.</li>
+</ul></section><section id="stringdb"><h2 class="section-heading"><a href="stringdb.html">Interaction networks with <code>StringDB</code></a></h2>
 <hr class="half-width">
 <ul><li>
 </li></ul></section><section id="conclusion"><h2 class="section-heading"><a href="conclusion.html">Conclusion</a></h2>

@@ -253,7 +253,9 @@
 
     <div id="flush-collapsecurrent" class="accordion-collapse collapse show" aria-labelledby="flush-headingcurrent" data-bs-parent="#accordionFlushcurrent">
       <div class="accordion-body">
-        <ul><li><a href="#explore-the-data-with-regenrich">Explore the data with <code>RegEnrich</code></a></li>
+        <ul><li><a href="#analysis-with-regenrich">Analysis with <code>RegEnrich</code></a></li>
+<li><a href="#using-a-mouse-tf-list-from-tcof-db">Using a mouse TF list from TcoF-DB</a></li>
+<li><a href="#inspecting-and-interpreting-regenrich-results">Inspecting and interpreting RegEnrich results</a></li>
         </ul></div><!--/div.accordion-body-->
     </div><!--/div.accordion-collapse-->
 
@@ -357,39 +359,110 @@
 <div class="card-body">
 <div class="inner">
 <h3 class="card-title">Questions</h3>
-<ul><li>
-</li></ul></div>
+<ul><li>How can we use <code>RegEnrich</code> to identify key
+transcriptional regulators from RNA-seq data?</li>
+<li>What inputs does <code>RegEnrich</code> need (expression matrix,
+metadata, list of regulators)?</li>
+<li>Why do we need mouse-specific transcription factor (TF) information
+instead of the built-in human TFs?</li>
+</ul></div>
 </div>
 </div>
 <div class="col-md-8">
 <div class="card-body">
 <div class="inner bordered">
 <h3 class="card-title">Objectives</h3>
+<ul><li>Understand the overall purpose of <code>RegEnrich</code> in
+identifying key regulators (e.g. TFs).</li>
+<li>Load a mouse transcription factor list suitable for use with
+<code>RegEnrich</code>.</li>
+<li>Prepare an expression matrix, design matrix, and contrast for a
+<code>RegenrichSet</code> object.</li>
+<li>Run the main <code>RegEnrich</code> pipeline and inspect the
+resulting ranked regulators.</li>
+</ul></div>
+</div>
+</div>
+</div>
+</div>
+<section><h2 class="section-heading" id="analysis-with-regenrich">Analysis with <code>RegEnrich</code>
+<a class="anchor" aria-label="anchor" href="#analysis-with-regenrich"></a></h2>
+<hr class="half-width"><p><code>RegEnrich</code> is used to identify potential <em>key
+regulators</em> (e.g. transcription factors) that may be driving the
+gene expression changes observed in your RNA-seq experiment.</p>
+<p>At a high level, the workflow looks like this:</p>
 <ul><li>
-</li></ul></div>
+<strong>Expression data</strong>: log-transformed expression matrix
+(genes × samples).<br></li>
+<li>
+<strong>Differential expression</strong>: identify genes that differ
+between groups (e.g. <code>limma</code>).<br></li>
+<li>
+<strong>Network construction</strong>: build a regulator–target
+network (e.g. co-expression).<br></li>
+<li>
+<strong>Enrichment testing</strong>: test whether targets of a
+regulator are enriched among DE genes.<br></li>
+<li>
+<strong>Ranking</strong>: combine evidence to give each regulator a
+score and rank.</li>
+</ul><p>Before we set up <code>RegEnrich</code> properly, we will explore the
+default TF list that comes with the package and see why it is not
+appropriate for this mouse dataset.</p>
+<div id="spot-the-problem-built-in-tfs-vs-mouse-data" class="callout discussion">
+<div class="callout-square">
+<i class="callout-icon" data-feather="message-circle"></i>
 </div>
-</div>
-</div>
-</div>
-<section><h2 class="section-heading" id="explore-the-data-with-regenrich">Explore the data with <code>RegEnrich</code>
-<a class="anchor" aria-label="anchor" href="#explore-the-data-with-regenrich"></a></h2>
-<hr class="half-width"><p>The TFs included in the package are just for humans, so yopu will
-need to download the mouse ones here: <a href="https://tools.sschmeier.com/tcof/home/" class="external-link uri">https://tools.sschmeier.com/tcof/home/</a></p>
-<p><em>Note: cam create a challenge that will load
-<code>data(TFs)</code> and see why it doesn’t work</em></p>
+<span class="callout-header">Discussion</span>
+<div id="spot-the-problem-built-in-tfs-vs-mouse-data" class="callout-inner">
+<h3 class="callout-title">Spot the problem: built-in TFs vs mouse
+data</h3>
+<div class="callout-content">
+<ol style="list-style-type: decimal"><li>
+<p>Load the built-in transcription factor list:</p>
 <div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">R<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mouseTFs</span> <span class="op">&lt;-</span> <span class="fu">read.csv</span><span class="op">(</span><span class="st">'data/BrowseTF  TcoF-DB.csv'</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu">data</span><span class="op">(</span><span class="va">TFs</span><span class="op">)</span></span></code></pre>
+</div>
+</li>
+<li><p>Inspect the TFs object:</p></li>
+</ol><ul><li>What kinds of identifiers are used (e.g. gene symbols, Entrez
+IDs)?</li>
+<li>Which species do these transcription factors belong to?</li>
+</ul><ol start="3" style="list-style-type: decimal"><li>Based on what you see:</li>
+</ol><ul><li>Why might using TFs be a problem for our mouse expression
+dataset?</li>
+<li>What could go wrong in the analysis if we use human TFs with mouse
+RNA-seq data?</li>
+</ul></div>
+</div>
+</div>
+</section><section><h2 class="section-heading" id="using-a-mouse-tf-list-from-tcof-db">Using a mouse TF list from TcoF-DB<a class="anchor" aria-label="anchor" href="#using-a-mouse-tf-list-from-tcof-db"></a></h2>
+<hr class="half-width"><p>The TFs included in the package are human-only, so for mouse data we
+must provide our own list of mouse transcription factors.</p>
+<p>For this workshop, we will use mouse TFs from TcoF-DB: <a href="https://tools.sschmeier.com/tcof/home/" class="external-link uri">https://tools.sschmeier.com/tcof/home/</a></p>
+<p>The code below shows how to: 1. Load a mouse TF list from a CSV file.
+2. Prepare an expression matrix for RegEnrich. 3. Create a RegenrichSet
+object. 4. Run the main RegEnrich pipeline and inspect the results.</p>
+<div class="codewrapper sourceCode" id="cb2">
+<h3 class="code-label">R<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Load mouse transcription factors (must include a "GeneID" column)</span></span>
+<span><span class="va">mouseTFs</span> <span class="op">&lt;-</span> <span class="fu">read.csv</span><span class="op">(</span><span class="st">'data/BrowseTF  TcoF-DB.csv'</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Prepare expression matrix: genes x samples</span></span>
 <span><span class="va">logcounts</span> <span class="op">&lt;-</span> <span class="va">filteredcounts</span><span class="op">[</span>,<span class="fl">4</span><span class="op">:</span><span class="fl">15</span><span class="op">]</span></span>
 <span><span class="fu">rownames</span><span class="op">(</span><span class="va">logcounts</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">filteredcounts</span><span class="op">$</span><span class="va">ENTREZID</span></span>
+<span></span>
+<span><span class="co"># Convert to log CPM for RegEnrich</span></span>
 <span><span class="va">logcounts</span> <span class="op">&lt;-</span> <span class="fu">cpm</span><span class="op">(</span><span class="va">logcounts</span>,log<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Define design and contrast</span></span>
+<span><span class="co"># Define design (uses CellTyoeStatus metadata) and example contrast</span></span>
 <span><span class="va">design</span> <span class="op">=</span> <span class="fu">model.matrix</span><span class="op">(</span><span class="op">~</span> <span class="va">factordata</span><span class="op">$</span><span class="va">CellTypeStatus</span><span class="op">)</span></span>
-<span><span class="va">contrast</span> <span class="op">=</span> <span class="fu">c</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span> <span class="co"># Example contrast</span></span>
+<span><span class="va">contrast</span> <span class="op">=</span> <span class="fu">c</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="co"># Initialise a RegenrichSet object</span></span>
 <span><span class="va">object</span> <span class="op">=</span> <span class="fu">RegenrichSet</span><span class="op">(</span>expr <span class="op">=</span> <span class="va">logcounts</span>,</span>
@@ -407,20 +480,120 @@ need to download the mouse ones here: <a href="https://tools.sschmeier.com/tcof/
 <span><span class="co"># Perform RegEnrich analysis</span></span>
 <span><span class="fu">set.seed</span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span></span>
-<span></span>
 <span><span class="co"># This step takes a while</span></span>
-<span><span class="co"># this step should be last or the results should be given to participants beforehand</span></span>
 <span><span class="va">object</span> <span class="op">=</span> <span class="fu">regenrich_diffExpr</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">regenrich_network</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">regenrich_enrich</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">regenrich_rankScore</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Obtain results</span></span>
+<span><span class="co"># Obtain results (ranked regulators)</span></span>
 <span><span class="va">res</span> <span class="op">=</span> <span class="fu">results_score</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
 <span><span class="fu">print</span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Visualise regulator-target expression</span></span>
+<span><span class="co"># Visualise regulator-target expression for selected regulator</span></span>
 <span><span class="fu">plotRegTarExpr</span><span class="op">(</span><span class="va">object</span>, reg <span class="op">=</span> <span class="st">"71371"</span><span class="op">)</span></span></code></pre>
+</div>
+<details><summary><strong>Click to expand: Understanding design matrices and
+contrasts</strong>
+</summary><p><code>RegEnrich</code> uses a design matrix and contrast in a similar
+way to limma: they define which groups you want to compare.</p>
+<p>We create a design matrix from a factor in our sample metadata:</p>
+<p><code>design &lt;- model.matrix(~ factordata$CellTypeStatus)</code></p>
+<p>This turns the factor <code>CellTypeStatus</code> into one column per
+group (plus an intercept). A contrast vector then specifies how to
+combine these columns to define a comparison.</p>
+<p>For example, a contrast like:</p>
+<p><code>contrast &lt;- c(-1, 1, 0, 0, 0, 0)</code></p>
+<p>means:</p>
+<ul><li>Compare group 2 vs group 1</li>
+<li>i.e. “group 2 MINUS group 1”</li>
+<li>All other groups are ignored (set to 0)</li>
+</ul><p>The exact mapping of positions in the contrast to group names depends
+on the order of the factor levels in
+<code>factordata$CellTypeStatus</code>.</p>
+</details><div id="test-your-understanding-contrasts" class="callout discussion">
+<div class="callout-square">
+<i class="callout-icon" data-feather="message-circle"></i>
+</div>
+<span class="callout-header">Discussion</span>
+<div id="test-your-understanding-contrasts" class="callout-inner">
+<h3 class="callout-title">Test your understanding: contrasts</h3>
+<div class="callout-content">
+<p>Look at the factor levels in
+<code>factordata$CellTypeStatus</code>:</p>
+<div class="codewrapper sourceCode" id="cb3">
+<h3 class="code-label">R<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">levels</span><span class="op">(</span><span class="va">factordata</span><span class="op">$</span><span class="va">CellTypeStatus</span><span class="op">)</span></span></code></pre>
+</div>
+<ol style="list-style-type: decimal"><li>How many groups are there?</li>
+<li>Which group is used as the baseline (reference) in the design
+matrix?</li>
+<li>Write a contrast that compares Luminal pregnant vs Basal
+pregnant.</li>
+<li>In words, what biological question does that contrast
+represent?</li>
+</ol></div>
+</div>
+</div>
+<div id="accordionSolution1" class="accordion challenge-accordion accordion-flush">
+<div class="accordion-item">
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
+  <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
+</button>
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div class="accordion-body">
+<p>The number of groups equals the number of unique levels returned by
+<code>levels(factordata$CellTypeStatus)</code></p>
+<p>The baseline group is the first level of the factor.</p>
+<p>If the factor levels are ordered like:</p>
+<p>[1] “Basal pregnant” “Basal lactate” “Luminal pregnant” “Luminal
+lactate” “Stem” “Other”</p>
+<p>Then the corresponding contrast to compare Luminal pregnant vs Basal
+pregnant is:</p>
+<p><code>contrast &lt;- c(-1, 0, 1, 0, 0, 0)</code></p>
+<p>This means:</p>
+<p>1 → Luminal pregnant</p>
+<p>-1 → Basal pregnant</p>
+<p>0 → all other groups ignored</p>
+<p>The biological question this is answering is:</p>
+<p>“Which transcriptional regulators differ between Luminal pregnant and
+Basal pregnant samples?”</p>
+<p>That is, regulators that functionally distinguish these two cell
+states.</p>
+</div>
+</div>
+</div>
+</div>
+</section><section><h2 class="section-heading" id="inspecting-and-interpreting-regenrich-results">Inspecting and interpreting RegEnrich results<a class="anchor" aria-label="anchor" href="#inspecting-and-interpreting-regenrich-results"></a></h2>
+<hr class="half-width"><p>The <code>results_score(object)</code> call returns a table of
+regulators with associated statistics. Typical columns summarise: - The
+regulator identifier (e.g. Entrez ID or gene symbol) - Evidence from
+differential expression and/or network structure - A combined score used
+to rank regulators (higher often = more influential)</p>
+<p>A simple way to start exploring is to look at the top regulators and
+their expression patterns across conditions: - Are top-ranked regulators
+differentially expressed between groups? - Do their predicted targets
+show coordinated expression changes? - Does the expression of a
+regulator and its targets match your biological expectations?</p>
+<div id="interpreting-regulator-results" class="callout discussion">
+<div class="callout-square">
+<i class="callout-icon" data-feather="message-circle"></i>
+</div>
+<span class="callout-header">Discussion</span>
+<div id="interpreting-regulator-results" class="callout-inner">
+<h3 class="callout-title">Interpreting regulator results</h3>
+<div class="callout-content">
+<p>Using the output table <code>res</code>: - Identify the top 3
+regulators by whatever ranking column is provided
+(e.g. <code>rankScore</code>). - For one of these regulators, check its
+expression across samples using <code>plotRegTarExpr()</code>. - Does
+this pattern support the idea that this regulator is involved in the
+contrast you specified? - How might you follow this up
+experimentally?</p>
+</div>
+</div>
 </div>
 <div id="keypoints1" class="callout keypoints">
 <div class="callout-square">
@@ -430,7 +603,15 @@ need to download the mouse ones here: <a href="https://tools.sschmeier.com/tcof/
 <div class="callout-inner">
 <div class="callout-content">
 <ul><li>
-</li></ul></div>
+<code>RegEnrich</code> helps identify potential regulatory drivers
+(e.g. TFs) behind observed gene expression changes.</li>
+<li>The package’s built-in TF dataset <code>(data(TFs))</code> is
+human-specific and not suitable for mouse RNA-seq analysis.</li>
+<li>For mouse data, a mouse-specific TF list (e.g. from TcoF-DB) must be
+supplied via the reg argument.</li>
+<li>A RegenrichSet object requires: an expression matrix, sample
+metadata, a regulator list, and a design/contrast specification.</li>
+</ul></div>
 </div>
 </div>
 <!--
