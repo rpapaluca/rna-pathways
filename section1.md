@@ -6,13 +6,16 @@ exercises: 2
 
 :::::::::::::::::::::::::::::::::::::: questions 
 
-- How do we analyze differentially expressed genes (DEGs) using pathway analysis?
+- How can we perform pathway analysis using KEGG?
+- What insights can KEGG enrichment provide about differentially expressed genes
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: objectives
 
-- Learn how to interpret DEGs using gene set testing in R.
+- Learn how to run KEGG over-representation and GSEA-style analysis in R.
+- Understand how to interpret pathway-level results.
+- Generate and visualise KEGG pathway figures.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -23,7 +26,8 @@ exercises: 2
 
 ## KEGG analysis
 
-Check to make sure we're using the right term: (can explain more about how to find the code as well)
+Before running enrichment, we need to confirm the correct KEGG organism code for mouse (`mmu`).
+You can verify by searching:
 
 
 ``` r
@@ -39,7 +43,7 @@ search_kegg_organism(kegg_organism, by='kegg_code')
 6386      mmuc Mycolicibacterium mucogenicum Mycolicibacterium mucogenicum
 ```
 
-We'll use the enrichKEGG function to look the organism:
+## Over-representation analysis with `enrichKEGG`
 
 
 ``` r
@@ -112,6 +116,8 @@ mmu04062    16
 mmu04914    10
 ```
 
+## GSEA-style KEGG enrichment with `gseKEGG`
+This method uses the entire ranked gene list rather than an arbitrary cutoff.
 
 ``` r
 kk2 <- gseKEGG(geneList     = debasal_genelist,
@@ -165,14 +171,19 @@ leading edge analysis...
 ``` output
 done...
 ```
-
+## Visualising enriched pathways
+### Dotplot
+Before we look at individual pathways in detail, we can visualise the overall enrichment results.  
+This dotplot summarises which KEGG pathways are enriched, how many genes contribute to each pathway, and how significant each one is.
 
 ``` r
 dotplot(kk2, showCategory = 10, title = "Enriched Pathways" , split=".sign") + facet_grid(.~.sign)
 ```
 
 <img src="fig/section1-rendered-unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
-
+### Similarity-based network plots
+Next, we can explore how the enriched pathways relate to one another.  
+The enrichment map groups pathways that share many genes, helping us see broader biological themes rather than isolated pathways.
 
 ``` r
 kk3 <- pairwise_termsim(kk2)
@@ -191,6 +202,8 @@ generated.
 ```
 
 <img src="fig/section1-rendered-unnamed-chunk-6-1.png" style="display: block; margin: auto;" />
+To understand which genes drive these pathways, we can use a `cnetplot`.  
+This visualisation links genes to the pathways they belong to and highlights “hub genes” that appear in multiple pathways.
 
 
 ``` r
@@ -198,11 +211,14 @@ cnetplot(kk3, categorySize="pvalue")
 ```
 
 ``` warning
-Warning: ggrepel: 160 unlabeled data points (too many overlaps). Consider
+Warning: ggrepel: 174 unlabeled data points (too many overlaps). Consider
 increasing max.overlaps
 ```
 
 <img src="fig/section1-rendered-unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+### Ridge plot
+We can also inspect the distribution of enrichment scores across pathways.  
+The ridgeplot shows how strongly and broadly each pathway is enriched across the ranked gene list.
 
 
 ``` r
@@ -220,34 +236,34 @@ head(kk3)
 ```
 
 ``` output
-               ID                             Description setSize
-mmu05171 mmu05171          Coronavirus disease - COVID-19     216
-mmu03010 mmu03010                                Ribosome     188
-mmu04060 mmu04060  Cytokine-cytokine receptor interaction     177
-mmu04110 mmu04110                              Cell cycle     153
-mmu04530 mmu04530                          Tight junction     147
-mmu04080 mmu04080 Neuroactive ligand-receptor interaction     146
+               ID                            Description setSize
+mmu05171 mmu05171         Coronavirus disease - COVID-19     216
+mmu03010 mmu03010                               Ribosome     188
+mmu04060 mmu04060 Cytokine-cytokine receptor interaction     177
+mmu04110 mmu04110                             Cell cycle     153
+mmu03008 mmu03008      Ribosome biogenesis in eukaryotes      76
+mmu05323 mmu05323                   Rheumatoid arthritis      66
          enrichmentScore      NES       pvalue     p.adjust      qvalue rank
-mmu05171       0.5006706 1.952093 0.0001147447 0.0001147447 0.003209068 3724
-mmu03010       0.5814136 2.236051 0.0001173433 0.0001173433 0.003209068 4733
-mmu04060       0.5334229 2.038796 0.0001184273 0.0001184273 0.003209068 2003
-mmu04110       0.5682774 2.137825 0.0001209629 0.0001209629 0.003209068 1287
-mmu04530       0.4668123 1.748854 0.0001215067 0.0001215067 0.003209068 2221
-mmu04080       0.4495919 1.683173 0.0001216397 0.0001216397 0.003209068 2287
+mmu05171       0.5006706 1.945473 0.0001141162 0.0001141162 0.003809727 3724
+mmu03010       0.5814136 2.229605 0.0001169044 0.0001169044 0.003809727 4733
+mmu04060       0.5334229 2.033413 0.0001177579 0.0001177579 0.003809727 2003
+mmu04110       0.5682774 2.131815 0.0001202357 0.0001202357 0.003809727 1287
+mmu03008       0.6209460 2.124090 0.0001340123 0.0001340123 0.003809727 3377
+mmu05323       0.6825391 2.282343 0.0001364443 0.0001364443 0.003809727 1971
                            leading_edge
 mmu05171 tags=59%, list=24%, signal=46%
 mmu03010 tags=67%, list=30%, signal=48%
 mmu04060 tags=36%, list=13%, signal=32%
 mmu04110  tags=22%, list=8%, signal=21%
-mmu04530 tags=18%, list=14%, signal=16%
-mmu04080 tags=36%, list=14%, signal=31%
+mmu03008 tags=57%, list=21%, signal=45%
+mmu05323 tags=41%, list=12%, signal=36%
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           core_enrichment
 mmu05171 12266/12262/12260/12259/666501/21926/18751/12268/13058/15200/20296/12985/24088/16176/664969/50908/20344/317677/14962/17174/16785/56040/269261/667277/625018/20084/99571/19982/68436/20963/225215/22186/50528/78294/619883/16451/67186/67097/26419/20085/67671/16193/671641/20055/19951/11837/100503670/20115/27367/243302/100040416/20116/54217/27370/11421/50909/621697/100042335/76808/629595/20103/270106/268449/20088/19896/67025/68052/20090/75617/432725/20054/27050/54127/26961/67115/67891/67945/114641/22121/19946/20091/19899/20042/66489/100039532/100040298/100502825/16194/67427/66480/66481/15945/65019/19921/100043695/20068/432502/19988/19933/76846/21898/267019/665562/20102/20044/27207/100043813/670832/19981/19942/71586/19941/57294/66475/19944/66483/27176/57808/16898/22371/625281/20848/19934/110954/433745/12263/68193
 mmu03010  666501/664969/16785/56040/269261/20084/56282/19982/66973/68436/225215/22186/78294/619883/67186/67097/20085/67671/671641/20055/19951/11837/100503670/20115/14694/68836/27367/243302/100040416/20116/54217/27370/621697/100042335/76808/629595/20103/270106/268449/20088/19896/67025/68052/20090/75617/432725/69163/20054/27050/54127/26961/67115/67891/67945/114641/22121/19946/20091/19899/20042/66489/59054/100039532/100040298/100502825/67427/60441/66480/66481/65019/19921/100043695/27397/20068/432502/118451/19988/19933/76846/267019/665562/79044/20102/20044/27207/100043813/78523/670832/19981/19942/66230/19941/57294/66475/19944/94063/66483/27176/57808/16898/625281/66258/19934/110954/433745/28028/68193/75398/67281/619547/319195/50529/26451/14109/19989/20104/64657/64655/68028/66407/20005/94065/216767/67308/19943/100043805
 mmu04060                                                                                                                                                                                                                                                                                                                                                                                                                                          12978/16878/77125/20311/29820/20308/20297/20305/12977/21948/17082/16182/232983/21942/18829/21926/20310/20309/16181/330122/14563/20296/12985/230405/93672/20304/16176/12984/16153/14560/83430/16847/215257/20306/16994/16154/16164/16156/20303/16169/110075/12983/20292/16185/326623/21938/17480/19116/16190/20300/14825/16323/16175/320100/21939/12156/21943/18049/12162/245527/69583/20315/16193/13608
 mmu04110                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  20877/434175/12235/77011/12236/76464/17218/12534/71988/268697/12428/17216/67849/17215/18817/17219/67052/105988/12532/107995/72415/22137/13555/12649/69716/12544/12442/67177/56150/12571/13557/12443/17127/27214
-mmu04530                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          12740/18260/212539/12737/53624/218518/12739/12480/231830/27375/70737/58187/12479/72058/12443/235442/53857/12738/21873/22350/104027/26419/224912/56449/58220/12567/12741
-mmu04080                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       12310/22044/12266/223780/19204/216643/15558/207911/14419/15559/381073/231602/13614/18619/65086/54140/12062/16336/17200/11555/11549/16847/239845/11535/53623/67405/20287/109648/20607/18441/18389/170483/18436/19116/11541/11550/11606/13618/21333/15552/193034/15465/12671/16995/11539/227717/18442/110637/381677/14062/14658/171530/11553
+mmu03008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   72515/102614/59028/14113/52530/68147/67973/67619/98956/217995/69237/30877/67134/213773/67724/245474/21771/105372/21453/69961/224092/19384/57815/230737/71340/97112/110816/19428/230082/19858/217109/16418/67045/73674/24128/72554/100019/66181/13000/195434/225348/14791/27993
+mmu05323                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              110935/20311/20297/12977/14960/21926/14961/15001/68775/20310/330122/22339/20296/24088/20304/16176/83430/15002/16994/16156/14825/16175/16414/21943/69583/20315/16193
 ```
 
 You can see the top pathways, you can get the top pathway ID with the ID column.
@@ -263,6 +279,8 @@ kk3@result$ID[1]
 [1] "mmu05171"
 ```
 
+Finally, we can visualise gene expression changes directly onto a KEGG pathway diagram.  
+`pathview` highlights which components of the pathway are up- or down-regulated in your analysis.
 
 
 ``` r
@@ -270,7 +288,7 @@ kk3@result$ID[1]
 mmu_pathway <- pathview(gene.data=debasal_genelist, pathway.id=kk3@result$ID[1], species = kegg_organism)
 ```
 
-These will prodce these files in your working directory:
+These will produce these files in your working directory:
 
 mmu05171.xml
 mmu05171.pathview.png
@@ -285,7 +303,11 @@ mmu05171.png
 
 ::::::::::::::::::::::::::::::::::::: keypoints 
 
-- Pathways are fun!
+- KEGG pathway analysis helps link DEGs to functional biological pathways.
+
+- Both ORA (`enrichKEGG`) and GSEA-style (`gseKEGG`) methods provide complementary insights.
+
+- `pathview` enables visual interpretation of pathway-level expression changes.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
