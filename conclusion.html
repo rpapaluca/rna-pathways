@@ -355,27 +355,63 @@
 <div class="card-body">
 <div class="inner">
 <h3 class="card-title">Questions</h3>
-<ul><li>
-</li></ul></div>
+<ul><li>What have we learned about functional enrichment and pathway
+analysis?</li>
+<li>How do different methods complement one another when interpreting
+RNA-seq results?</li>
+</ul></div>
 </div>
 </div>
 <div class="col-md-8">
 <div class="card-body">
 <div class="inner bordered">
 <h3 class="card-title">Objectives</h3>
-<ul><li>
-</li></ul></div>
+<ul><li>Summarise the key concepts introduced across the lesson series.</li>
+<li>Understand how different gene set and network tools fit together in
+a typical analysis workflow.</li>
+<li>Recognise when and why to choose each enrichment method.</li>
+</ul></div>
 </div>
 </div>
 </div>
 </div>
 <section><h2 class="section-heading" id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a></h2>
-<hr class="half-width"><p>In this tutorial, we have seen how to perform gene set testing
-various R packages. These methods help identify enriched gene ontology
-categories and gene sets, providing insights into the biological
-processes and pathways involved in the differential expression of genes.
-By using multiple methods, we can gain insights into the pathways
-involved in the biological processes of interest.</p>
+<hr class="half-width"><p>In this tutorial, we have explored several complementary approaches
+for interpreting RNA-seq results beyond differential expression alone.
+Through using these various R packages, we are able to get insights
+biological processes and pathways involved in the differential
+expression of genes observed.</p>
+<p>Specifcally, we worked through:</p>
+<ul><li>
+<strong>Over-representation analysis (ORA)</strong> with
+<code>clusterProfiler</code><br></li>
+<li>
+<strong>Gene set enrichment analysis (GSEA)</strong> using
+<code>fgsea</code><br></li>
+<li>
+<strong>Regulatory network analysis</strong> with
+<code>RegEnrich</code><br></li>
+<li>
+<strong>Protein–protein interaction networks</strong> via
+<code>STRINGdb</code>
+</li>
+</ul><p>Although each tool uses different assumptions and statistical
+frameworks, they all aim to answer a similar biological question:</p>
+<blockquote>
+<p><em>Which biological processes, pathways, or regulators help explain
+the gene expression changes we observe?</em></p>
+</blockquote>
+<p>By applying multiple methods, you can cross-validate findings and
+gain a more complete picture of the molecular biology underlying your
+condition of interest.</p>
+<p>You should now feel comfortable:</p>
+<ul><li>preparing gene lists or ranked gene sets<br></li>
+<li>running several types of enrichment analyses<br></li>
+<li>visualising pathway-level patterns<br></li>
+<li>integrating results from complementary tools<br></li>
+<li>exploring interaction networks and regulatory drivers</li>
+</ul><p>These approaches form a core part of transcriptomic interpretation
+and are widely used in modern functional genomics.</p>
 <div id="keypoints1" class="callout keypoints">
 <div class="callout-square">
 <i class="callout-icon" data-feather="key"></i>
@@ -383,8 +419,15 @@ involved in the biological processes of interest.</p>
 <span class="callout-header">Key Points</span>
 <div class="callout-inner">
 <div class="callout-content">
-<ul><li>
-</li></ul></div>
+<ul><li>Enrichment methods help translate gene-level changes into biological
+meaning.<br></li>
+<li>Different tools (ORA, GSEA, network-based methods) answer different
+but complementary questions.<br></li>
+<li>Combining methods provides stronger and more interpretable
+biological insights.<br></li>
+<li>Functional enrichment is an essential component of any RNA-seq
+analysis workflow.</li>
+</ul></div>
 </div>
 </div>
 <!--

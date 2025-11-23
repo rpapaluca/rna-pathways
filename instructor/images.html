@@ -392,11 +392,26 @@
 <figure><img src="../fig/clusterprofiler-rendered-unnamed-chunk-5-1.png" style="display: block; margin: auto;" class="figure mx-auto d-block"></figure><hr></section><section id="section1"><h2 class="section-heading"><a href="section1.html">KEGG enrichment analysis with <code>clusterProfiler</code></a></h2>
 <hr class="half-width">
 <h3 id="section1-figure-1">Figure 1</h3>
-<figure><img src="../fig/section1-rendered-unnamed-chunk-5-1.png" style="display: block; margin: auto;" class="figure mx-auto d-block"></figure><hr>
+<p><img src="../fig/section1-rendered-unnamed-chunk-5-1.png" style="display: block; margin: auto;" class="figure">
+### Similarity-based network plots Next, we can explore how the enriched
+pathways relate to one another.<br>
+The enrichment map groups pathways that share many genes, helping us see
+broader biological themes rather than isolated pathways.</p>
+<hr>
 <h3 id="section1-figure-2">Figure 2</h3>
-<figure><img src="../fig/section1-rendered-unnamed-chunk-6-1.png" style="display: block; margin: auto;" class="figure mx-auto d-block"></figure><hr>
+<p><img src="../fig/section1-rendered-unnamed-chunk-6-1.png" style="display: block; margin: auto;" class="figure">
+To understand which genes drive these pathways, we can use a
+<code>cnetplot</code>.<br>
+This visualisation links genes to the pathways they belong to and
+highlights “hub genes” that appear in multiple pathways.</p>
+<hr>
 <h3 id="section1-figure-3">Figure 3</h3>
-<figure><img src="../fig/section1-rendered-unnamed-chunk-7-1.png" style="display: block; margin: auto;" class="figure mx-auto d-block"></figure><hr>
+<p><img src="../fig/section1-rendered-unnamed-chunk-7-1.png" style="display: block; margin: auto;" class="figure">
+### Ridge plot We can also inspect the distribution of enrichment scores
+across pathways.<br>
+The ridgeplot shows how strongly and broadly each pathway is enriched
+across the ranked gene list.</p>
+<hr>
 <h3 id="section1-figure-4">Figure 4</h3>
 <p aria-hidden="true">Image 1 of 1: ‘Image of pathway’</p>
 <figure><img src="../fig/mmu05171.pathview.png" alt="Image of pathway" class="figure mx-auto d-block"><div class="figcaption">Figure of output produced</div>
