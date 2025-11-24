@@ -102,7 +102,7 @@ The code below shows how to:
 3. Create a RegenrichSet object.
 4. Run the main RegEnrich pipeline and inspect the results.
 
-```{r, warning=FALSE}
+```{r, eval=FALSE}
 # Load mouse transcription factors (must include a "GeneID" column)
 mouseTFs <- read.csv('data/BrowseTF  TcoF-DB.csv')
 
@@ -148,6 +148,57 @@ plotRegTarExpr(object, reg = "71371")
 
 
 ```
+
+```{r, echo=FALSE,warning=FALSE}
+# Load mouse transcription factors (must include a "GeneID" column)
+mouseTFs <- read.csv('data/BrowseTF  TcoF-DB.csv')
+
+# Prepare expression matrix: genes x samples
+logcounts <- filteredcounts[,4:15]
+rownames(logcounts) <- filteredcounts$ENTREZID
+
+# Convert to log CPM for RegEnrich
+logcounts <- cpm(logcounts,log=TRUE)
+
+# Define design (uses CellTyoeStatus metadata) and example contrast
+design = model.matrix(~ factordata$CellTypeStatus)
+contrast = c(-1, 1,0,0,0,0) 
+
+# Load object instead
+load('data/regenrich_object.RData')
+
+# # Initialise a RegenrichSet object
+# object = RegenrichSet(expr = logcounts,
+#                       colData = factordata,
+#                       reg = unique(mouseTFs$GeneID), # regulators
+#                       method = "limma", # differential expression analysis method
+#                       design = design, # design model matrix
+#                       contrast = contrast, # contrast
+#                       networkConstruction = "COEN", # network inference method
+#                       enrichTest = "FET") # enrichment analysis method
+# 
+# print(object)
+# 
+# 
+# # Perform RegEnrich analysis
+# set.seed(123)
+# 
+# # This step takes a while
+# object = regenrich_diffExpr(object) %>%
+#   regenrich_network() %>%
+#   regenrich_enrich() %>%
+#   regenrich_rankScore()
+
+# Obtain results (ranked regulators)
+res = results_score(object)
+print(res)
+
+# Visualise regulator-target expression for selected regulator
+plotRegTarExpr(object, reg = "71371")
+
+
+```
+
 <details>
 <summary><strong>Click to expand: Understanding design matrices and contrasts</strong></summary>
 

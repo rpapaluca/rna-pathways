@@ -24,12 +24,37 @@ Please install the following packages:
 
 ```r
 
-#Run this code to install BiocManager if you don't have it
-    if (!require("BiocManager", quietly = TRUE))
-        install.packages("BiocManager")
+## Install BiocManager if not already installed
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
 
-#Use BiocManager to install relevant packages
-BiocManager::install(c("clusterProfiler", "fgsea", "RegEnrich","STRINGdb", "org.Mm.eg.db"))
+## List of Bioconductor packages
+bioc_packages <- c(
+    "edgeR",
+    "goseq",
+    "fgsea",
+    "EGSEA",
+    "clusterProfiler",
+    "org.Mm.eg.db",
+    "enrichplot",
+    "pathview",
+    "preprocessCore",
+    "RegEnrich",
+    "STRINGdb"
+)
+
+## Install Bioconductor packages
+BiocManager::install(bioc_packages, ask = FALSE, update = TRUE)
+
+## Install CRAN packages
+cran_packages <- c(
+    "ggplot2",
+    "impute"
+)
+
+install.packages(cran_packages)
+
 
 ```
 
@@ -37,9 +62,7 @@ BiocManager::install(c("clusterProfiler", "fgsea", "RegEnrich","STRINGdb", "org.
 
 We will use RNA-seq data from Fu et al., 2015 (<https://www.ncbi.nlm.nih.gov/pubmed/25730472>). 
 
-
-
-We have also provided the data we will be using within the GitHub repo. To access them:
+We have provided the data we will be using within the GitHub repo. To access them:
 
 - [limma-voom_basalpregnant-basallactate](episodes/data/limma-voom_basalpregnant-basallactate)
 - [limma-voom_luminalpregnant-luminallactate](episodes/data/limma-voom_luminalpregnant-luminallactate)
@@ -49,18 +72,7 @@ We have also provided the data we will be using within the GitHub repo. To acces
 - [filteredcounts](episodes/data/limma-voom_filtered_counts)
 - [mouseTFs](episodes/ßdata/BrowseTF  TcoF-DB.csv)
 
-```r
-
-#To retrieve files from GitHub
-
-debasal <- read.csv("data/limma-voom_basalpregnant-basallactate", header = TRUE, sep = "\t")
-deluminal <- read.csv("data/limma-voom_luminalpregnant-luminallactate", header = TRUE, sep = "\t")
-seqdata <- read.csv("data/seqdata", header = TRUE, sep = "\t")
-load("data/mouse_hallmark_sets.RData") #loads as Mm.H
-factordata <- read.table("data/factordata", header = TRUE, sep = "\t")
-filteredcounts <- read.csv("data/limma-voom_filtered_counts", header = TRUE, sep = "\t")
-
-```
+The code assumes that these files are in a folder called "data" but you can adjust the code to the correct download path as needed.
 
 
 You can load some of the data directly from Zenodo into your RStudio enviornment with the following code:
