@@ -67,7 +67,7 @@ contact: 'bioinformatics-training@unimelb.edu.au'
 episodes:
 - introduction.Rmd
 - clusterprofiler.Rmd
-#- section1.Rmd
+- section1.Rmd
 #- fgsea.Rmd
 #- regenrich.Rmd
 #- stringdb.Rmd
