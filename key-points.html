@@ -244,7 +244,7 @@
 <div class="accordion accordion-flush" id="accordionFlush2">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading2">
-        <a href="introduction.html">1. Introduction</a>
+        <a href="01introduction.html">1. Introduction</a>
     </div>
 <!--/div.accordion-header-->
 
@@ -256,7 +256,7 @@
 <div class="accordion accordion-flush" id="accordionFlush3">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading3">
-        <a href="clusterprofiler.html">2. Gene Ontology testing with <code>clusterProfiler</code></a>
+        <a href="02clusterprofiler.html">2. Gene Ontology testing with <code>clusterProfiler</code></a>
     </div>
 <!--/div.accordion-header-->
 
@@ -268,7 +268,7 @@
 <div class="accordion accordion-flush" id="accordionFlush4">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading4">
-        <a href="section1.html">3. KEGG enrichment analysis with <code>clusterProfiler</code></a>
+        <a href="03kegg.html">3. KEGG enrichment analysis with <code>clusterProfiler</code></a>
     </div>
 <!--/div.accordion-header-->
 
@@ -280,7 +280,7 @@
 <div class="accordion accordion-flush" id="accordionFlush5">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading5">
-        <a href="fgsea.html">4. Gene set enrichment analysis with <code>fgsea</code></a>
+        <a href="04fgsea.html">4. Gene set enrichment analysis with <code>fgsea</code></a>
     </div>
 <!--/div.accordion-header-->
 
@@ -292,7 +292,7 @@
 <div class="accordion accordion-flush" id="accordionFlush6">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading6">
-        <a href="regenrich.html">5. Analysis with <code>RegEnrich</code></a>
+        <a href="05regenrich.html">5. Analysis with <code>RegEnrich</code></a>
     </div>
 <!--/div.accordion-header-->
 
@@ -304,7 +304,7 @@
 <div class="accordion accordion-flush" id="accordionFlush7">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading7">
-        <a href="stringdb.html">6. Interaction networks with <code>StringDB</code></a>
+        <a href="06stringdb.html">6. Interaction networks with <code>StringDB</code></a>
     </div>
 <!--/div.accordion-header-->
 
@@ -316,7 +316,7 @@
 <div class="accordion accordion-flush" id="accordionFlush8">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading8">
-        <a href="conclusion.html">7. Conclusion</a>
+        <a href="07conclusion.html">7. Conclusion</a>
     </div>
 <!--/div.accordion-header-->
 
@@ -379,8 +379,8 @@
     <main id="main-content" class="main-content"><div class="container lesson-content">
         
         
-<section id="introduction"><h2 class="section-heading"><a href="introduction.html">Introduction</a></h2>
-<hr class="half-width"></section><section id="clusterprofiler"><h2 class="section-heading"><a href="clusterprofiler.html">Gene Ontology testing with <code>clusterProfiler</code></a></h2>
+<section id="01introduction"><h2 class="section-heading"><a href="01introduction.html">Introduction</a></h2>
+<hr class="half-width"></section><section id="02clusterprofiler"><h2 class="section-heading"><a href="02clusterprofiler.html">Gene Ontology testing with <code>clusterProfiler</code></a></h2>
 <hr class="half-width">
 <ul>
 <li>GO terms are divided into Biological Process (BP), Molecular
@@ -392,7 +392,7 @@ and <strong>GSEA</strong> using the GO database directly.</li>
 <li>GO testing results highlight gene sets or pathways that are
 overrepresented in your dataset, allowing interpretation of
 downregulated or upregulated genes.</li>
-</ul></section><section id="section1"><h2 class="section-heading"><a href="section1.html">KEGG enrichment analysis with <code>clusterProfiler</code></a></h2>
+</ul></section><section id="03kegg"><h2 class="section-heading"><a href="03kegg.html">KEGG enrichment analysis with <code>clusterProfiler</code></a></h2>
 <hr class="half-width">
 <ul>
 <li><p>KEGG pathway analysis helps link DEGs to functional biological
@@ -401,7 +401,7 @@ pathways.</p></li>
 (<code>gseKEGG</code>) methods provide complementary insights.</p></li>
 <li><p><code>pathview</code> enables visual interpretation of
 pathway-level expression changes.</p></li>
-</ul></section><section id="fgsea"><h2 class="section-heading"><a href="fgsea.html">Gene set enrichment analysis with <code>fgsea</code></a></h2>
+</ul></section><section id="04fgsea"><h2 class="section-heading"><a href="04fgsea.html">Gene set enrichment analysis with <code>fgsea</code></a></h2>
 <hr class="half-width">
 <ul>
 <li>GSEA evaluates enrichment across a ranked list of all genes, not
@@ -417,7 +417,7 @@ visualise how pathways behave across the ranked gene list.</li>
 <code>fgsea</code> focuses on speed and flexibility, while
 <code>clusterProfiler</code> provides tighter integration with specific
 databases (e.g., GO, KEGG) and additional plotting helpers.</li>
-</ul></section><section id="regenrich"><h2 class="section-heading"><a href="regenrich.html">Analysis with <code>RegEnrich</code></a></h2>
+</ul></section><section id="05regenrich"><h2 class="section-heading"><a href="05regenrich.html">Analysis with <code>RegEnrich</code></a></h2>
 <hr class="half-width">
 <ul>
 <li>
@@ -429,7 +429,7 @@ human-specific and not suitable for mouse RNA-seq analysis.</li>
 supplied via the reg argument.</li>
 <li>A RegenrichSet object requires: an expression matrix, sample
 metadata, a regulator list, and a design/contrast specification.</li>
-</ul></section><section id="stringdb"><h2 class="section-heading"><a href="stringdb.html">Interaction networks with <code>StringDB</code></a></h2>
+</ul></section><section id="06stringdb"><h2 class="section-heading"><a href="06stringdb.html">Interaction networks with <code>StringDB</code></a></h2>
 <hr class="half-width">
 <ul>
 <li><p><code>STRINGdb</code> links your genes to protein–protein
@@ -441,7 +441,7 @@ genes that may not be obvious from lists or tables.</p></li>
 <li><p>STRING provides its own functional enrichment, which can
 complement results from <code>clusterProfiler</code> and
 <code>fgsea</code>.</p></li>
-</ul></section><section id="conclusion"><h2 class="section-heading"><a href="conclusion.html">Conclusion</a></h2>
+</ul></section><section id="07conclusion"><h2 class="section-heading"><a href="07conclusion.html">Conclusion</a></h2>
 <hr class="half-width">
 <ul>
 <li>Enrichment methods help translate gene-level changes into biological
