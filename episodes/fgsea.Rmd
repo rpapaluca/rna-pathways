@@ -36,8 +36,9 @@ This helps detect coordinated but subtle shifts across entire pathways that migh
 The `fgsea` package implements a fast, permutation-efficient version of the original Broad Institute GSEA algorithm, allowing thousands of pathways to be tested quickly.
 
 In this part of the workshop, we will:
-- Create a ranked list of genes from the 'debasal' dataset
-- Run 'fgsea()' using the mouse Hallmark gene sets '(Mm.H)'.
+
+- Create a ranked list of genes from the `debasal` dataset
+- Run `fgsea()` using the mouse Hallmark gene sets `(Mm.H)`.
 - Explore the top enriched pathways
 - Visualise both multiple pathways and a single pathway in detail 
 
@@ -125,12 +126,14 @@ plotEnrichment(Mm.H[[topPathwaysUp[1]]], rankedgenes) + labs(title = topPathways
 
 :::::::::::::::::::::::::::::::::::: challenge
 ## Apply fgsea to the *deluminal* contrast 
-Q:  Repeat the GSEA analysis using the `deluminal` dataset instead of `debasal`.
+
+Repeat the GSEA analysis using the `deluminal` dataset instead of `debasal`.
 
 1. Create a ranked gene list using the `t` statistic from `deluminal`.  
 2. Run `fgsea()` with the same Hallmark gene sets (`Mm.H`).  
 3. Identify the top 5 enriched pathways.  
 4. Are they different from the `debasal` results? What biological differences might explain this?
+
 :::: solution
 ```r
 # Create a ranked gene list for the deluminal contrast
