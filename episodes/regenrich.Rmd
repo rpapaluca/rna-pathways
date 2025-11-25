@@ -220,7 +220,7 @@ plotRegTarExpr(object, reg = "71371")
 
 ```
 
-:::: callout
+:::: spoiler
 
 ## Understanding design matrices and contrasts
 
@@ -252,6 +252,7 @@ The exact mapping of positions in the contrast to group names depends on the ord
 
 
 
+
 :::::::::::::::::::::::::::::::::::: challenge
 
 ## Test your understanding: contrasts
@@ -265,8 +266,9 @@ levels(factordata$CellTypeStatus)
 2. Which group is used as the baseline (reference) in the design matrix?
 3. Write a contrast that compares Luminal pregnant vs Basal pregnant.
 4. In words, what biological question does that contrast represent?
-:::::::::::::::::::::::::::::::::::::::::::::::
+
 :::::::::::::::::::::::::::::::::::::::: solution
+
 The number of groups equals the number of unique levels returned by
 `levels(factordata$CellTypeStatus)`
 
@@ -299,7 +301,7 @@ The biological question this is answering is:
 That is, regulators that functionally distinguish these two cell states.
 
 :::::::::::::::::::::::::::::::::::::::::::::::
-
+:::::::::::::::::::::::::::::::::::::::::::::::
 
 
 ## Inspecting and interpreting RegEnrich results
