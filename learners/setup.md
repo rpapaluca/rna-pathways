@@ -70,7 +70,7 @@ We have provided the data we will be using within the GitHub repo. To access the
 - [mouse_hallmark_sets](episodes/data/mouse_hallmark_sets.RData)
 - [factordata](episodes/data/factordata)
 - [filteredcounts](episodes/data/limma-voom_filtered_counts)
-- [mouseTFs](episodes/ßdata/BrowseTF  TcoF-DB.csv)
+- [mouseTFs](episodes/data/BrowseTF  TcoF-DB.csv)
 
 The code assumes that these files are in a folder called "data" but you can adjust the code to the correct download path as needed.
 

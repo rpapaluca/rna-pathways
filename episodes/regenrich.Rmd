@@ -94,9 +94,11 @@ Before we set up `RegEnrich` properly, we will explore the default TF list that 
 ## Using a mouse TF list from TcoF-DB
 The TFs included in the package are human-only, so for mouse data we must provide our own list of mouse transcription factors.
 
-For this workshop, we will use mouse TFs from TcoF-DB: https://tools.sschmeier.com/tcof/home/
+For this workshop, we will use mouse TFs from [TcoF-DB](https://tools.sschmeier.com/tcof/home/).
+You can directly download the file that we will be using from [this link](episodes/data/BrowseTF  TcoF-DB.csv).
 
 The code below shows how to:
+
 1. Load a mouse TF list from a CSV file.
 2. Prepare an expression matrix for RegEnrich.
 3. Create a RegenrichSet object.
@@ -130,6 +132,21 @@ object = RegenrichSet(expr = logcounts,
 print(object)
 
 
+
+
+
+```
+
+:::: caution
+
+The `regenrich_diffExp` step can take a while. We have already run this step for you and you can [download the `object` data directly using this link](episodes/data/regenrich_object.RData).
+
+
+:::
+
+
+```{r, eval=FALSE}
+
 # Perform RegEnrich analysis
 set.seed(123)
 
@@ -138,6 +155,7 @@ object = regenrich_diffExpr(object) %>%
   regenrich_network() %>%
   regenrich_enrich() %>%
   regenrich_rankScore()
+
 
 # Obtain results (ranked regulators)
 res = results_score(object)
@@ -148,6 +166,9 @@ plotRegTarExpr(object, reg = "71371")
 
 
 ```
+
+
+
 
 ```{r, echo=FALSE,warning=FALSE}
 # Load mouse transcription factors (must include a "GeneID" column)
@@ -199,8 +220,9 @@ plotRegTarExpr(object, reg = "71371")
 
 ```
 
-<details>
-<summary><strong>Click to expand: Understanding design matrices and contrasts</strong></summary>
+:::: callout
+
+## Understanding design matrices and contrasts
 
 `RegEnrich` uses a design matrix and contrast in a similar way to limma: they define which groups you want to compare.
 
@@ -224,7 +246,10 @@ means:
 
 The exact mapping of positions in the contrast to group names depends on the order of the factor levels in `factordata$CellTypeStatus`.
 
-</details>
+
+::::
+
+
 
 
 :::::::::::::::::::::::::::::::::::: challenge
@@ -274,6 +299,8 @@ The biological question this is answering is:
 That is, regulators that functionally distinguish these two cell states.
 
 :::::::::::::::::::::::::::::::::::::::::::::::
+
+
 
 ## Inspecting and interpreting RegEnrich results
 The `results_score(object)` call returns a table of regulators with associated statistics.
