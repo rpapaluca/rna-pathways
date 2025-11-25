@@ -339,7 +339,7 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>KEGG enrichment analysis with <code>clusterProfiler</code></h1>
-        <p>Last updated on 2025-11-23 |
+        <p>Last updated on 2025-11-25 |
 
         <a href="https://melbournebioinformatics.github.io/rna-pathways/edit/main/episodes/section1.Rmd" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -393,9 +393,9 @@ searching:</p>
 <h3 class="code-label">OUTPUT<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="output" tabindex="0"><code>     kegg_code               scientific_name                   common_name
-26        mmur            Microcebus murinus              gray mouse lemur
-30         mmu                  Mus musculus                   house mouse
-6386      mmuc Mycolicibacterium mucogenicum Mycolicibacterium mucogenicum</code></pre>
+29        mmur            Microcebus murinus              gray mouse lemur
+34         mmu                  Mus musculus                   house mouse
+9090      mmuc Mycolicibacterium mucogenicum Mycolicibacterium mucogenicum</code></pre>
 </div>
 </section><section><h2 class="section-heading" id="over-representation-analysis-with-enrichkegg">Over-representation analysis with <code>enrichKEGG</code>
 <a class="anchor" aria-label="anchor" href="#over-representation-analysis-with-enrichkegg"></a></h2>
@@ -595,7 +595,7 @@ highlights “hub genes” that appear in multiple pathways.</p>
 <div class="codewrapper">
 <h3 class="code-label">WARNING<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="warning" tabindex="0"><code>Warning: ggrepel: 174 unlabeled data points (too many overlaps). Consider
+<pre class="warning" tabindex="0"><code>Warning: ggrepel: 292 unlabeled data points (too many overlaps). Consider
 increasing max.overlaps</code></pre>
 </div>
 <p><img src="fig/section1-rendered-unnamed-chunk-7-1.png" style="display: block; margin: auto;" class="figure">
@@ -625,33 +625,33 @@ across the ranked gene list.</p>
 <h3 class="code-label">OUTPUT<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="output" tabindex="0"><code>               ID                            Description setSize
+mmu05012 mmu05012                      Parkinson disease     243
 mmu05171 mmu05171         Coronavirus disease - COVID-19     216
 mmu03010 mmu03010                               Ribosome     188
 mmu04060 mmu04060 Cytokine-cytokine receptor interaction     177
 mmu04110 mmu04110                             Cell cycle     153
-mmu03008 mmu03008      Ribosome biogenesis in eukaryotes      76
-mmu05323 mmu05323                   Rheumatoid arthritis      66
+mmu04670 mmu04670   Leukocyte transendothelial migration      92
          enrichmentScore      NES       pvalue     p.adjust      qvalue rank
-mmu05171       0.5006706 1.945473 0.0001141162 0.0001141162 0.003809727 3724
-mmu03010       0.5814136 2.229605 0.0001169044 0.0001169044 0.003809727 4733
-mmu04060       0.5334229 2.033413 0.0001177579 0.0001177579 0.003809727 2003
-mmu04110       0.5682774 2.131815 0.0001202357 0.0001202357 0.003809727 1287
-mmu03008       0.6209460 2.124090 0.0001340123 0.0001340123 0.003809727 3377
-mmu05323       0.6825391 2.282343 0.0001364443 0.0001364443 0.003809727 1971
+mmu05012       0.3964242 1.562348 0.0001129178 0.0001129178 0.004164224 5173
+mmu05171       0.5006706 1.952607 0.0001148369 0.0001148369 0.004164224 3724
+mmu03010       0.5814136 2.232662 0.0001176332 0.0001176332 0.004164224 4733
+mmu04060       0.5334229 2.037020 0.0001183152 0.0001183152 0.004164224 2003
+mmu04110       0.5682774 2.136222 0.0001209336 0.0001209336 0.004164224 1287
+mmu04670       0.5067223 1.792319 0.0001301575 0.0001301575 0.004164224 1944
                            leading_edge
+mmu05012 tags=51%, list=33%, signal=35%
 mmu05171 tags=59%, list=24%, signal=46%
 mmu03010 tags=67%, list=30%, signal=48%
 mmu04060 tags=36%, list=13%, signal=32%
 mmu04110  tags=22%, list=8%, signal=21%
-mmu03008 tags=57%, list=21%, signal=45%
-mmu05323 tags=41%, list=12%, signal=36%
+mmu04670 tags=24%, list=12%, signal=21%
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           core_enrichment
+mmu05012                                                             109731/12322/72027/22223/21823/70405/53857/67847/226641/214922/11951/22213/22186/78294/22153/11740/26419/69806/140499/105675/13665/11947/228033/12868/66445/68194/28080/56228/78943/12858/110877/69077/68202/67126/18174/22272/70316/12048/11946/12865/66925/66142/64704/110323/66414/66152/26442/66046/12867/12859/66694/22059/68015/13666/17992/12861/56436/66043/407785/12857/68375/67264/54405/57296/17995/12866/67530/19175/13162/22433/230075/68197/68198/14977/56791/26446/66218/17993/22273/67273/69875/224129/623286/22334/66091/67942/67128/26445/22123/26444/68349/66916/22154/12864/13063/11950/66108/68342/71679/11949/12323/67184/19167/67680/66576/19172/56551/17161/22145/14683/66997/11783/104130/19177/22201/14828/16439/11957/16574/21762/67003/66495/19184/70247
 mmu05171 12266/12262/12260/12259/666501/21926/18751/12268/13058/15200/20296/12985/24088/16176/664969/50908/20344/317677/14962/17174/16785/56040/269261/667277/625018/20084/99571/19982/68436/20963/225215/22186/50528/78294/619883/16451/67186/67097/26419/20085/67671/16193/671641/20055/19951/11837/100503670/20115/27367/243302/100040416/20116/54217/27370/11421/50909/621697/100042335/76808/629595/20103/270106/268449/20088/19896/67025/68052/20090/75617/432725/20054/27050/54127/26961/67115/67891/67945/114641/22121/19946/20091/19899/20042/66489/100039532/100040298/100502825/16194/67427/66480/66481/15945/65019/19921/100043695/20068/432502/19988/19933/76846/21898/267019/665562/20102/20044/27207/100043813/670832/19981/19942/71586/19941/57294/66475/19944/66483/27176/57808/16898/22371/625281/20848/19934/110954/433745/12263/68193
 mmu03010  666501/664969/16785/56040/269261/20084/56282/19982/66973/68436/225215/22186/78294/619883/67186/67097/20085/67671/671641/20055/19951/11837/100503670/20115/14694/68836/27367/243302/100040416/20116/54217/27370/621697/100042335/76808/629595/20103/270106/268449/20088/19896/67025/68052/20090/75617/432725/69163/20054/27050/54127/26961/67115/67891/67945/114641/22121/19946/20091/19899/20042/66489/59054/100039532/100040298/100502825/67427/60441/66480/66481/65019/19921/100043695/27397/20068/432502/118451/19988/19933/76846/267019/665562/79044/20102/20044/27207/100043813/78523/670832/19981/19942/66230/19941/57294/66475/19944/94063/66483/27176/57808/16898/625281/66258/19934/110954/433745/28028/68193/75398/67281/619547/319195/50529/26451/14109/19989/20104/64657/64655/68028/66407/20005/94065/216767/67308/19943/100043805
 mmu04060                                                                                                                                                                                                                                                                                                                                                                                                                                          12978/16878/77125/20311/29820/20308/20297/20305/12977/21948/17082/16182/232983/21942/18829/21926/20310/20309/16181/330122/14563/20296/12985/230405/93672/20304/16176/12984/16153/14560/83430/16847/215257/20306/16994/16154/16164/16156/20303/16169/110075/12983/20292/16185/326623/21938/17480/19116/16190/20300/14825/16323/16175/320100/21939/12156/21943/18049/12162/245527/69583/20315/16193/13608
 mmu04110                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  20877/434175/12235/77011/12236/76464/17218/12534/71988/268697/12428/17216/67849/17215/18817/17219/67052/105988/12532/107995/72415/22137/13555/12649/69716/12544/12442/67177/56150/12571/13557/12443/17127/27214
-mmu03008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   72515/102614/59028/14113/52530/68147/67973/67619/98956/217995/69237/30877/67134/213773/67724/245474/21771/105372/21453/69961/224092/19384/57815/230737/71340/97112/110816/19428/230082/19858/217109/16418/67045/73674/24128/72554/100019/66181/13000/195434/225348/14791/27993
-mmu05323                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              110935/20311/20297/12977/14960/21926/14961/15001/68775/20310/330122/22339/20296/24088/20304/16176/83430/15002/16994/16156/14825/16175/16414/21943/69583/20315/16193</code></pre>
+mmu04670                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             12740/22324/18260/12737/53624/17395/12739/17970/18751/13058/58187/216033/16401/12927/22329/59310/13057/12738/16414/17390/22350/20315</code></pre>
 </div>
 <p>You can see the top pathways, you can get the top pathway ID with the
 ID column.</p>
@@ -665,7 +665,7 @@ ID column.</p>
 <div class="codewrapper">
 <h3 class="code-label">OUTPUT<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="output" tabindex="0"><code>[1] "mmu05171"</code></pre>
+<pre class="output" tabindex="0"><code>[1] "mmu05012"</code></pre>
 </div>
 <p>Finally, we can visualise gene expression changes directly onto a
 KEGG pathway diagram.<br><code>pathview</code> highlights which components of the pathway are up-
@@ -761,8 +761,8 @@ any links that you are not going to use.
   "url": "melbournebioinformatics.github.io/uom-varnish/section1.html",
   "identifier": "melbournebioinformatics.github.io/uom-varnish/section1.html",
   "dateCreated": "2025-10-09",
-  "dateModified": "2025-11-23",
-  "datePublished": "2025-11-23"
+  "dateModified": "2025-11-25",
+  "datePublished": "2025-11-25"
 }
 
   </script><script>
